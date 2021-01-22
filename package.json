@@ -4,8 +4,9 @@
   "description": "This repo is used to train the image recognition.",
   "main": "app.js",
   "dependencies": {
-    "node-tesseract-ocr": "^2.0.0",
+    "node-fetch": "^2.6.1",
     "node-html-parser": "^2.0.2",
+    "node-tesseract-ocr": "^2.0.0",
     "tesseract.js": "^2.1.4"
   },
   "devDependencies": {},
