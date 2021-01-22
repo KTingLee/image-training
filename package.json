@@ -1,0 +1,17 @@
+{
+  "name": "image_training",
+  "version": "1.0.0",
+  "description": "This repo is used to train the image recognition.",
+  "main": "app.js",
+  "dependencies": {
+    "node-tesseract-ocr": "^2.0.0",
+    "node-html-parser": "^2.0.2",
+    "tesseract.js": "^2.1.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
