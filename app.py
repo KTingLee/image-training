@@ -33,8 +33,7 @@ def getMaxNum(filesNameArr):
 def parseImg(imgName):
     path = f'./captcha_Images/{imgName}.png'
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    threshold, img = cv2.threshold(
-        img, 200, 255, cv2.THRESH_BINARY)  # 大於 200 的值都變 255(白色)
+    threshold, img = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)  # 大於 200 的值都變 255(白色)
 
     # 去除噪訊
     img = imgService.eraseImage(img)
@@ -79,19 +78,16 @@ class SaveWindow ():
         self._window.geometry(newGeometry='400x400+3000+250')
         self._window.title('儲存標記圖片')
 
-        self.canvas = tkinter.Canvas(
-            self._window, height=50, width=50, bg='white')
+        self.canvas = tkinter.Canvas(self._window, height=50, width=50, bg='white')
         self.canvas.pack()
 
         self.inputTextBox = tkinter.Entry(self._window, show=None, width=10)
         self.inputTextBox.pack()
 
-        self.saveBtn = tkinter.Button(
-            self._window, text='儲存', command=self.saveImg)
+        self.saveBtn = tkinter.Button(self._window, text='儲存', command=self.saveImg)
         self.saveBtn.pack()
 
-        self.skipBtn = tkinter.Button(
-            self._window, text='跳過', command=self.skip)
+        self.skipBtn = tkinter.Button(self._window, text='跳過', command=self.skip)
         self.skipBtn.pack()
 
 
