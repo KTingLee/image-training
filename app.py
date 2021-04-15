@@ -7,31 +7,33 @@ import tkinter.messagebox
 import cv2
 import os
 
-trainingDataDir = './MLdata'
+imgExt = '.jpg'
+sourceDataDir = './captcha_Images'
+outputDataDir = './MLdata'
 
 
-def mkdir(dirName):
+def mkdir(path):
     try:
-        os.makedirs(f'{trainingDataDir}/{dirName}')
+        os.makedirs(path)
     except FileExistsError:
         pass
 
 
 def getImgNames(path):
     fileNames = os.listdir(path)
-    fileNames = [file for file in files if '.png' in file]
+    fileNames = [file for file in fileNames if imgExt in file]
     return fileNames
 
 
 def getMaxNum(filesNameArr):
-    filesNameArr = [int(num.split('.png')[0]) for num in filesNameArr]
+    filesNameArr = [int(num.split(imgExt)[0]) for num in filesNameArr]
     if len(filesNameArr) == 0:
         return 0
     return max(filesNameArr)
 
 
 def parseImg(imgName):
-    path = f'./captcha_Images/{imgName}.png'
+    path = f'{sourceDataDir}/{imgName}{imgExt}'
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     threshold, img = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)  # 大於 200 的值都變 255(白色)
 
@@ -51,10 +53,13 @@ def parseImg(imgName):
 class SaveWindow ():
     def saveImg(self):
         answer = self.inputTextBox.get().upper()
-        mkdir(answer)
-        imgNames = getImgNames(f'{trainingDataDir}/{answer}')
+        answerDir = f'{outputDataDir}/{answer}'
+        mkdir(answerDir)
+
+        imgNames = getImgNames(answerDir)
         fileName = getMaxNum(imgNames) + 1
-        cv2.imwrite(f'{trainingDataDir}/{answer}/{fileName}.png', self.char)
+        cv2.imwrite(f'{answerDir}/{fileName}{imgExt}', self.char)
+
 
     def skip(self):
         pass
@@ -64,12 +69,7 @@ class SaveWindow ():
         pass
 
     def __init__(self):
-        count = 0
-        self.captchaDir = './captcha_Images'
-        imgs = getImgNames(self.captchaDir)
-
         self.init()
-        self.readImg(f'{self.captchaDir}/{imgs[count]}')
         self._window.mainloop()
 
     def init(self):
