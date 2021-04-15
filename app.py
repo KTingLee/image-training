@@ -4,6 +4,7 @@ import lib.tool_images as imgService
 import numpy as np
 import tkinter
 import tkinter.messagebox
+import PIL.Image, PIL.ImageTk
 import cv2
 import os
 
@@ -33,7 +34,7 @@ def getMaxNum(filesNameArr):
 
 
 def parseImg(imgName):
-    path = f'{sourceDataDir}/{imgName}{imgExt}'
+    path = f'{sourceDataDir}/{imgName}'
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     threshold, img = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)  # 大於 200 的值都變 255(白色)
 
@@ -53,24 +54,51 @@ def parseImg(imgName):
 class SaveWindow ():
     def saveImg(self):
         answer = self.inputTextBox.get().upper()
+        print(answer)
         answerDir = f'{outputDataDir}/{answer}'
         mkdir(answerDir)
 
         imgNames = getImgNames(answerDir)
         fileName = getMaxNum(imgNames) + 1
         cv2.imwrite(f'{answerDir}/{fileName}{imgExt}', self.char)
+        self.showChar(self.charCount)
+        return
 
 
     def skip(self):
-        pass
+        self.showChar(self.charCount)
 
-    def readImg(self, path):
-        self.chars = parseImg(path)
-        pass
+    def getChars(self, imgCount):
+        if imgCount >= len(self.imgNames):
+            self._window.destroy()
+            return
+
+        chars = parseImg(self.imgNames[self.imgCount])
+        self.charCount = 0
+        return chars
+
+    def showChar(self, charCount):
+        if charCount >= len(self.chars):
+            self.imgCount += 1
+            self.chars = self.getChars(self.imgCount)
+            self.charCount = 0
+
+        self.char = self.chars[self.charCount]
+        cv2.imshow('2', self.char)
+        cv2.waitKey(0)
+        photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(self.char))
+        self.canvas.create_image(2, 2, anchor='nw', image=photo)
+        self.canvas.pack()
+        self.charCount += 1
 
     def __init__(self):
         self.init()
-        self._window.mainloop()
+        self.imgNames = getImgNames(sourceDataDir)
+
+        self.imgCount = 0
+        self.charCount = 0
+        self.chars = self.getChars(self.imgCount)
+        self.showChar(self.charCount)
 
     def init(self):
         self._window = tkinter.Tk()
@@ -78,7 +106,7 @@ class SaveWindow ():
         self._window.geometry(newGeometry='400x400+3000+250')
         self._window.title('儲存標記圖片')
 
-        self.canvas = tkinter.Canvas(self._window, height=50, width=50, bg='white')
+        self.canvas = tkinter.Canvas(self._window, height=50, width=50, bg='gray')
         self.canvas.pack()
 
         self.inputTextBox = tkinter.Entry(self._window, show=None, width=10)
@@ -90,6 +118,15 @@ class SaveWindow ():
         self.skipBtn = tkinter.Button(self._window, text='跳過', command=self.skip)
         self.skipBtn.pack()
 
+    def mainloop(self):
+        self._window.mainloop()
 
 if __name__ == '__main__':
     window = SaveWindow()
+    # chars = parseImg('2.jpg')
+    # char = chars[0]
+    # cv2.imshow('2', char)
+    # cv2.waitKey(0)
+    # photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(char))
+    # window.canvas.create_image(2, 2, anchor='nw', image=photo)
+    window.mainloop()
